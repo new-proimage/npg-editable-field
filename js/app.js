@@ -23,10 +23,17 @@
     doubleClick: function () {
       if (!this.get('isEditing')) {
         this.set('isEditing', true);
+        this.set('cache', this.get('value'));
       }
     },
     keyPress: function (ev) {
       if (this.get('isEditing') && ev.keyCode === 13) {
+        this.set('isEditing', false);
+      }
+    },
+    keyDown: function (ev) {
+      if (ev.keyCode === 27) {
+        this.set('value', this.get('cache'));
         this.set('isEditing', false);
       }
     },
@@ -36,7 +43,7 @@
       }
     },
     onEditingChanged: Ember.observer(function () {
-      if (!this.get('isEditing')) {
+      if (!this.get('isEditing') && this.get('value') !== this.get('cache')) {
         this.sendAction('onRename', this.get('value'));
       }
     }, 'isEditing')
