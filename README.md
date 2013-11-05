@@ -19,10 +19,11 @@ Editable Field component accept the following properties upon instantiation
 * {string}  `onRename`  Name of the function in the hosted controller to be invoked when rename occurred passing the updated value
 
 
-    {{editable-field
-        value=phrase
-        onRename="renameHandler"
-    }}
+        {{editable-field
+            value=phrase
+            onRename="renameHandler"
+        }}
+        
 
 ## 4. Credits
 
