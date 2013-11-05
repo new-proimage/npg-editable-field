@@ -6,6 +6,21 @@
 </head>
 <body>
 
+<script type="text/x-handlebars" id="application">
+  {{editable-field
+    value=phrase
+    onRename="renameHandler"
+  }}
+</script>
+
+<script type="text/x-handlebars" id="components/editable-field">
+  {{#if isEditing}}
+    {{input type="text" value=value autofocus="autofocus"}}
+  {{else}}
+    <div>{{value}}</div>
+  {{/if}}
+</script>
+
 
 <script type="text/javascript" src="vendors/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="vendors/handlebars-1.0.0.js"></script>
