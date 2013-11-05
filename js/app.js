@@ -12,6 +12,12 @@
   });
 
   NPG.EditableFieldComponent = Ember.Component.extend({
+    init: function () {
+      Ember.TextField.reopen({
+        attributeBindings: ['autofocus']
+      });
+      return this._super();
+    },
     classNames: ['editable-field'],
     isEditing: false,
     doubleClick: function () {
