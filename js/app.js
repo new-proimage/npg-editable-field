@@ -56,7 +56,7 @@
     }),
     onEditingChanged: Ember.observer(function () {
       if (!this.get('isEditing') && this.get('value') !== this.get('cache')) {
-        this.sendAction('onRename', this.get('value'));
+        this.sendAction('afterEdit', this.get('value'));
       }
     }, 'isEditing')
   });
