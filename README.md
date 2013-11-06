@@ -15,13 +15,15 @@ Editable Field is instantiated from Handlebars template:
 ## 3. API
 Editable Field component accept the following properties upon instantiation
 
-* {string}  `value`     Current value of the displayed text
-* {string}  `onRename`  Name of the function in the hosted controller to be invoked when rename occurred passing the updated value
+* {string}  `value`         Current value of the displayed text
+* {string}  `onRename`      Name of the function in the hosted controller to be invoked when rename occurred passing the updated value
+* {boolean} `explicitEdit`  Explicit edit, if `true`, adds edit button next to the text; otherwise edit mode is invoked by double click
 
 
         {{editable-field
             value=phrase
             onRename="renameHandler"
+            explicitEdit=true
         }}
         
 
