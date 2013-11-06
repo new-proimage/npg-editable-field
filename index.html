@@ -10,14 +10,21 @@
   {{editable-field
     value=phrase
     onRename="renameHandler"
+    explicitEdit=true
   }}
 </script>
 
 <script type="text/x-handlebars" id="components/editable-field">
   {{#if isEditing}}
-    {{input type="text" value=value autofocus="autofocus"}}
+    {{view inputView value=value finish="finish" cancel="cancel"}}
   {{else}}
-    <div>{{value}}</div>
+    <div>
+      {{value}}
+      {{#if explicitEdit}}
+        <button {{action 'edit'}}>Edit</button>
+      {{/if}}
+    </div>
+
   {{/if}}
 </script>
 
