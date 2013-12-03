@@ -11,7 +11,13 @@
 </script>
 
 <script type="text/x-handlebars" id="editable-view">
-  {{view.display}}
+
+  {{#if controller.isEditing}}
+    {{view view.InputView}}
+  {{else}}
+    <div>{{view.display}}</div>
+  {{/if}}
+
 </script>
 
 

@@ -19,6 +19,13 @@
 
 
   NPG.EventMixin = Ember.Mixin.create({
+    /*
+    The instanceof check is a HACK due to inconsistency
+    of Ember built-in views API. TextField view inherits from the
+    Ember.Component whist other view like Ember.Select or Ember.Checkbox
+    extend Ember.View.
+    This leads to misuse of controller and their methods as well.
+     */
     keyDown: function (ev) {
       // esc
       if (ev.keyCode === 27) {
@@ -49,31 +56,54 @@
     }
   });
   NPG.TextMixin = Ember.Mixin.create({
-    contentBinding: 'parentView.content',
     displayBinding: 'content',
     InputView: Ember.TextField.extend(NPG.EventMixin, {
       attributeBindings: ['autofocus'],
       autofocus: true,
-      valueBinding: 'parentView.content'
+      valueBinding: 'parentView.content',
+      finish: 'finish',
+      cancel: 'cancel'
     })
   });
   NPG.CheckboxMixin = Ember.Mixin.create({
-    displayBinding: 'data',
+    displayBinding: 'content',
     InputView: Ember.Checkbox.extend(NPG.EventMixin, {
-      checkedBinding: 'parentView.data'
+      checkedBinding: 'parentView.content'
     })
   });
   NPG.SelectdMixin = Ember.Mixin.create({
-    displayBinding: 'data.value',
+    displayBinding: 'content.value',
     InputView: Ember.Select.extend(NPG.EventMixin, {
-      contentBinding: 'parentView.options',
-      valueBinding: 'parentView.value'
+      contentBinding: 'parentView.content.options',
+      valueBinding: 'parentView.content.value'
     })
   });
 
-  NPG.EditableField = Ember.ContainerView.extend({
-    classNames: ['editable-field'],
+  NPG.EditableController = Ember.Controller.extend({
     isEditing: false,
+    actions: {
+      edit: function () {
+        if (!this.get('isEditing')) {
+          this.set('isEditing', true);
+          this.set('cache', this.get('content'));
+        }
+      },
+      finish: function () {
+        this.set('isEditing', false);
+      },
+      cancel: function () {
+        this.set('content', this.get('cache'));
+        this.set('isEditing', false);
+      }
+    }
+  });
+
+  NPG.EditableField = Ember.ContainerView.extend({
+    init: function () {
+      this._super.apply(this, arguments);
+      this.set('controller', NPG.EditableController.create());
+    },
+    classNames: ['editable-field'],
     childViews: ['editableView'],
     editableView: function () {
       var data = this.get('content'), mixin;
@@ -87,9 +117,14 @@
         mixin = NPG.TextMixin;
       }
       return Ember.View.createWithMixins(mixin, {
-        templateName: 'editable-view'
+        templateName: 'editable-view',
+        contentBinding: 'parentView.content',
+        controllerBinding: 'parentView.controller'
       });
-    }.property('content')
+    }.property('content'),
+    doubleClick: function () {
+      this.get('controller').send('edit');
+    }
   });
 
   Ember.Handlebars.helper('editable-field', NPG.EditableField);
