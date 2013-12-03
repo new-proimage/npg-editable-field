@@ -30,7 +30,7 @@ Editable Field component accept the following properties upon instantiation
 ## 4. Credits
 
 * Sergey N. Bolshchikov (New ProImage)
-* Ilan Goldfeld (New ProIamge)
+* Ilan Goldfeld (New ProImage)
 
 ## 5. License
 The MIT License (MIT)
