@@ -71,7 +71,15 @@
       checkedBinding: 'parentView.content'
     })
   });
-  NPG.SelectdMixin = Ember.Mixin.create({
+  NPG.SelectMixin = Ember.Mixin.create({
+    init: function () {
+      this._super.apply(this, arguments);
+      this.addObserver('content', function () {
+        if (this.get('content.value') === null) {
+          Ember.set(this.get('content'), 'value', this.get('content.options.firstObject'));
+        }
+      });
+    },
     displayBinding: 'content.value',
     InputView: Ember.Select.extend(NPG.EventMixin, {
       contentBinding: 'parentView.content.options',

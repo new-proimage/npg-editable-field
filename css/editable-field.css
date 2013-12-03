@@ -1,3 +1,7 @@
-.editable-field input {
-  width: 200px;
+.editable-field div {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
 }
