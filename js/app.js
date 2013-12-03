@@ -56,34 +56,31 @@
     }
   });
   NPG.TextMixin = Ember.Mixin.create({
-    displayBinding: 'content',
+    displayBinding: 'controller.content',
     InputView: Ember.TextField.extend(NPG.EventMixin, {
       attributeBindings: ['autofocus'],
       autofocus: true,
-      valueBinding: 'parentView.content',
+      valueBinding: 'parentView.controller.content',
       finish: 'finish',
       cancel: 'cancel'
     })
   });
   NPG.CheckboxMixin = Ember.Mixin.create({
-    displayBinding: 'content',
+    displayBinding: 'controller.content',
     InputView: Ember.Checkbox.extend(NPG.EventMixin, {
-      checkedBinding: 'parentView.content'
+      checkedBinding: 'parentView.controller.content'
     })
   });
   NPG.SelectMixin = Ember.Mixin.create({
-    init: function () {
-      this._super.apply(this, arguments);
-      this.addObserver('content', function () {
-        if (this.get('content.value') === null) {
-          Ember.set(this.get('content'), 'value', this.get('content.options.firstObject'));
-        }
-      });
-    },
-    displayBinding: 'content.value',
+    displayBinding: 'controller.content.value',
+    valueDidChange: function () {
+      if (this.get('controller') !== null && this.get('controller.content.value') === null) {
+        Ember.set(this.get('controller.content'), 'value', this.get('controller.content.options.firstObject'));
+      }
+    }.observes('controller.content.value'),
     InputView: Ember.Select.extend(NPG.EventMixin, {
-      contentBinding: 'parentView.content.options',
-      valueBinding: 'parentView.content.value'
+      contentBinding: 'parentView.controller.content.options',
+      valueBinding: 'parentView.controller.content.value'
     })
   });
 
@@ -109,7 +106,10 @@
   NPG.EditableField = Ember.ContainerView.extend({
     init: function () {
       this._super.apply(this, arguments);
-      this.set('controller', NPG.EditableController.create());
+      var content = this.get('content');
+      this.set('controller', NPG.EditableController.create({
+        content: content
+      }));
     },
     classNames: ['editable-field'],
     childViews: ['editableView'],
@@ -126,7 +126,6 @@
       }
       return Ember.View.createWithMixins(mixin, {
         templateName: 'editable-view',
-        contentBinding: 'parentView.content',
         controllerBinding: 'parentView.controller'
       });
     }.property('content'),
