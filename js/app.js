@@ -78,7 +78,11 @@
       autofocus: true,
       valueBinding: 'parentView.controller.content',
       finish: 'finish',
-      cancel: 'cancel'
+      cancel: 'cancel',
+      doubleClick: function (ev) {
+        this._super.apply(this, arguments);
+        ev.stopImmediatePropagation();
+      }
     })
   });
   NPG.CheckboxMixin = Ember.Mixin.create({
