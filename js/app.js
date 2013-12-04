@@ -17,7 +17,6 @@
     }
   });
 
-
   NPG.EventMixin = Ember.Mixin.create({
     /*
     The instanceof check is a HACK due to inconsistency
@@ -55,6 +54,7 @@
       }
     }
   });
+
   NPG.TextMixin = Ember.Mixin.create({
     displayBinding: 'controller.content',
     InputView: Ember.TextField.extend(NPG.EventMixin, {
@@ -86,11 +86,18 @@
 
   NPG.EditableController = Ember.Controller.extend({
     isEditing: false,
+    onEditingDidChange: function () {
+      var hostingController = this.get('hostingController'),
+          actionName = this.get('afterEditHandler');
+      if (!this.get('isEditing') && this.get('content') !== this.get('cache')) {
+        hostingController.send(actionName, this.get('content'))
+      }
+    }.observes('isEditing'),
     actions: {
       edit: function () {
         if (!this.get('isEditing')) {
           this.set('isEditing', true);
-          this.set('cache', this.get('content'));
+          this.set('cache', Ember.copy(this.get('content')));
         }
       },
       finish: function () {
@@ -103,12 +110,31 @@
     }
   });
 
+  /**
+   * Editable component is the container view with registered helper
+   * which creates the same intuitive behavior experience as an
+   * Ember.Component however with minor deviations.
+   * Editable Field is a container view which chooses the type
+   * of the editor depending on the type of the content
+   * that it is provided.
+   *
+   * Editable Field currently supports 3 types of editing:
+   * - regular input fields for the types of string and numbers
+   * - checkbox field for the types of boolean values
+   * - select (combobox) field for the object with properties {value: null, options: []}
+   *
+   * API
+   * @param {string|number|boolean|object}  content     The underlying model of the editable field
+   * @param {string}                        afterEdit   Name of the handler in the hosting controller to be invoked whenever the editing has occurred
+   */
   NPG.EditableField = Ember.ContainerView.extend({
     init: function () {
       this._super.apply(this, arguments);
-      var content = this.get('content');
+      var that = this;
       this.set('controller', NPG.EditableController.create({
-        content: content
+        content: that.get('content'),
+        afterEditHandler: that.get('afterEdit'),
+        hostingController: that.get('parentView.controller')
       }));
     },
     classNames: ['editable-field'],
@@ -135,57 +161,5 @@
   });
 
   Ember.Handlebars.helper('editable-field', NPG.EditableField);
-
-
-
-//  NPG.EditableFieldComponent = Ember.Component.extend({
-//    init: function () {
-//      if (!this.get('explicitEdit')) {
-//        this.on('doubleClick', function () {
-//          this.send('edit');
-//        });
-//      }
-//      return this._super();
-//    },
-//    classNames: ['editable-field'],
-//    isEditing: false,
-//    actions: {
-//      edit: function () {
-//        if (!this.get('isEditing')) {
-//          this.set('isEditing', true);
-//          this.set('cache', this.get('data'));
-//        }
-//      },
-//      finish: function () {
-//        this.set('isEditing', false);
-//      },
-//      cancel: function () {
-//        this.set('data', this.get('cache'));
-//        this.set('isEditing', false);
-//      }
-//    },
-//    inputView: Ember.TextField.extend({
-//      attributeBindings: ['autofocus'],
-//      autofocus: true,
-//      keyDown: function (ev) {
-//        // esc
-//        if (ev.keyCode === 27) {
-//          this.sendAction('cancel');
-//        }
-//        // enter
-//        if (ev.keyCode === 13) {
-//          this.sendAction('finish');
-//        }
-//      },
-//      focusOut: function () {
-//        this.sendAction('finish');
-//      }
-//    }),
-//    onEditingChanged: Ember.observer(function () {
-//      if (!this.get('isEditing') && this.get('value') !== this.get('cache')) {
-//        this.sendAction('afterEdit', this.get('value'));
-//      }
-//    }, 'isEditing')
-//  });
 
 })();

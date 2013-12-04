@@ -7,7 +7,10 @@
 <body>
 
 <script type="text/x-handlebars" id="application">
-  {{editable-field content=NPG.fruits}}
+  {{editable-field
+    content=NPG.fruits
+    afterEdit="renameHandler"
+  }}
 </script>
 
 <script type="text/x-handlebars" id="editable-view">
