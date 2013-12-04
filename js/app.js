@@ -17,6 +17,18 @@
     }
   });
 
+  /*********************************************
+   *
+   *  EDITABLE FIELD COMPONENT
+   *
+   ********************************************/
+
+  /**
+   * Common events mixin for editable view.
+   * Support of focus out and enter to commit the
+   * changes, as well as esc button to cancel the
+   * editing mode
+   */
   NPG.EventMixin = Ember.Mixin.create({
     /*
     The instanceof check is a HACK due to inconsistency
@@ -55,6 +67,10 @@
     }
   });
 
+  /**
+   * Editable Mixins that include the
+   * display logic and editable view
+   */
   NPG.TextMixin = Ember.Mixin.create({
     displayBinding: 'controller.content',
     InputView: Ember.TextField.extend(NPG.EventMixin, {
@@ -97,6 +113,7 @@
       edit: function () {
         if (!this.get('isEditing')) {
           this.set('isEditing', true);
+          // should copy the content in case it's object
           this.set('cache', Ember.copy(this.get('content')));
         }
       },
@@ -160,6 +177,7 @@
     }
   });
 
+  // Register the handlerbar helper
   Ember.Handlebars.helper('editable-field', NPG.EditableField);
 
 })();
