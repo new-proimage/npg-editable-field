@@ -153,9 +153,10 @@
       this._super.apply(this, arguments);
       var that = this;
       this.set('controller', NPG.EditableController.create({
-        content: that.get('content'),
+        contentBinding: '_view.content',
         afterEditHandler: that.get('afterEdit'),
-        hostingController: that.get('parentView.controller')
+        hostingController: that.get('parentView.controller'),
+        _view: that
       }));
     },
     classNames: ['editable-field'],
