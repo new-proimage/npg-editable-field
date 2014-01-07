@@ -72,7 +72,9 @@
    * display logic and editable view
    */
   NPG.TextMixin = Ember.Mixin.create({
-    displayBinding: 'controller.content',
+    DisplayView: Ember.View.extend({
+      contentBinding: 'controller.content'
+    }),
     InputView: Ember.TextField.extend(NPG.EventMixin, {
       attributeBindings: ['autofocus'],
       autofocus: true,
@@ -86,13 +88,17 @@
     })
   });
   NPG.CheckboxMixin = Ember.Mixin.create({
-    displayBinding: 'controller.content',
+    DisplayView: Ember.Checkbox.extend({
+      checkedBinding: 'controller.content'
+    }),
     InputView: Ember.Checkbox.extend(NPG.EventMixin, {
       checkedBinding: 'parentView.controller.content'
     })
   });
   NPG.SelectMixin = Ember.Mixin.create({
-    displayBinding: 'controller.content.value',
+    DisplayView: Ember.View.extend({
+      contentBinding: 'controller.content.value'
+    }),
     valueDidChange: function () {
       if (this.get('controller') !== null && this.get('controller.content.value') === null) {
         Ember.set(this.get('controller.content'), 'value', this.get('controller.content.options.firstObject'));
@@ -182,7 +188,7 @@
     }
   });
 
-  // Register the handlerbar helper
+  // Register the handlebars helper
   Ember.Handlebars.helper('editable-field', NPG.EditableField);
 
 })();
